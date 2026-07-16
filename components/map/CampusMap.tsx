@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RestroomPanel } from "@/components/panel/RestroomPanel";
-import type { RestroomDetail } from "@/lib/types";
+import type { BuildingLabel, RestroomDetail } from "@/lib/types";
 
 import styles from "./campus-map.module.css";
 
@@ -23,6 +23,7 @@ type Props = {
   onMapClick?: (x: number, y: number) => void;
   /** Extra pins to render that aren't part of `restrooms` (e.g. an admin's in-progress "ghost pin"). */
   extraMarkers?: { x: number; y: number; label: string }[];
+  buildingLabels?: BuildingLabel[];
 };
 
 type PinGroup = { key: string; x: number; y: number; restrooms: RestroomDetail[] };
@@ -36,6 +37,7 @@ export function CampusMap({
   onLike,
   onMapClick,
   extraMarkers,
+  buildingLabels,
 }: Props) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const mapStageRef = useRef<HTMLDivElement>(null);
@@ -76,6 +78,14 @@ export function CampusMap({
     stage.querySelectorAll<HTMLElement>("[data-pin]").forEach((el) => {
       el.style.transform = `scale(${1 / scale})`;
     });
+    // Labels are plain children of the scaled map-stage, same as the
+    // building outlines — no counter-scale, so they grow and shrink with
+    // the map exactly like the buildings do. Only their reveal (opacity)
+    // is zoom-gated, toggled here since it depends on the live scale.
+    stage.querySelectorAll<HTMLElement>("[data-label]").forEach((el) => {
+      const revealScale = Number(el.dataset.revealScale);
+      el.style.opacity = scale >= revealScale ? "1" : "0";
+    });
   }
 
   function fitToViewport() {
@@ -83,16 +93,46 @@ export function CampusMap({
     if (!viewport) return;
     const vw = viewport.clientWidth;
     const vh = viewport.clientHeight;
-    const fitScale = Math.min(vw / mapWidth, vh / mapHeight);
-    transform.current.minScale = fitScale * 0.85;
+    // "Cover" the viewport (like CSS background-size: cover), not "contain" —
+    // with contain, whichever axis doesn't match the viewport's aspect ratio
+    // shows blank space on both sides even at the most-zoomed-out state. With
+    // cover, the map always fully fills the viewport; the axis that
+    // overflows is reachable by panning instead.
+    const fitScale = Math.max(vw / mapWidth, vh / mapHeight);
+    // Never allow zooming out past that — beyond it you'd see blank space
+    // around the map's edges again.
+    transform.current.minScale = fitScale;
     transform.current.scale = fitScale;
     transform.current.panX = (vw - mapWidth * fitScale) / 2;
     transform.current.panY = (vh - mapHeight * fitScale) / 2;
+    clampPan();
     applyTransform();
   }
 
   function clamp(v: number, lo: number, hi: number) {
     return Math.max(lo, Math.min(hi, v));
+  }
+
+  /**
+   * Panning has no other limit, so dragging far enough used to be able to
+   * push the entire map off-screen, revealing the viewport's own blank
+   * background. Cap visible whitespace at a quarter of the viewport on any
+   * side, on every axis, at every zoom level (not just the most-zoomed-out
+   * state — that's just the tightest case since there's the least overflow
+   * slack to pan within).
+   */
+  function clampPan() {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    const vw = viewport.clientWidth;
+    const vh = viewport.clientHeight;
+    const t = transform.current;
+    const mapVisibleW = mapWidth * t.scale;
+    const mapVisibleH = mapHeight * t.scale;
+    const maxWhitespaceX = vw * 0.25;
+    const maxWhitespaceY = vh * 0.25;
+    t.panX = clamp(t.panX, vw - maxWhitespaceX - mapVisibleW, maxWhitespaceX);
+    t.panY = clamp(t.panY, vh - maxWhitespaceY - mapVisibleH, maxWhitespaceY);
   }
 
   function zoomAt(focusX: number, focusY: number, nextScale: number) {
@@ -103,6 +143,7 @@ export function CampusMap({
     t.scale = clamped;
     t.panX = focusX - mapX * clamped;
     t.panY = focusY - mapY * clamped;
+    clampPan();
     applyTransform();
   }
 
@@ -134,7 +175,11 @@ export function CampusMap({
 
     function onPointerDown(e: PointerEvent) {
       const target = e.target as HTMLElement;
-      if (target.closest("[data-pin]") || panelRef.current?.contains(target)) return;
+      // Every clickable thing on the map (pins, zoom/reset buttons) is a
+      // <button> — capturing the pointer here would swallow their click
+      // events (pointer capture redirects the matching pointerup away from
+      // the button, so its native click never fires).
+      if (target.closest("button") || panelRef.current?.contains(target)) return;
       dragging = true;
       setIsDragging(true);
       startX = e.clientX;
@@ -147,6 +192,7 @@ export function CampusMap({
       if (!dragging) return;
       transform.current.panX = startPanX + (e.clientX - startX);
       transform.current.panY = startPanY + (e.clientY - startY);
+      clampPan();
       applyTransform();
     }
     function onPointerUp(e: PointerEvent) {
@@ -155,7 +201,7 @@ export function CampusMap({
       setIsDragging(false);
       if (!moved && onMapClick) {
         const target = e.target as HTMLElement;
-        if (!target.closest("[data-pin]") && !panelRef.current?.contains(target)) {
+        if (!target.closest("button") && !panelRef.current?.contains(target)) {
           const rect = viewport!.getBoundingClientRect();
           const fx = e.clientX - rect.left;
           const fy = e.clientY - rect.top;
@@ -197,6 +243,18 @@ export function CampusMap({
           style={{ width: mapWidth, height: mapHeight }}
         >
           <div dangerouslySetInnerHTML={{ __html: mapSvg }} />
+
+          {buildingLabels?.map((b) => (
+            <div
+              key={b.key}
+              data-label="true"
+              data-reveal-scale={b.revealScale}
+              className={styles.buildingLabel}
+              style={{ left: b.x, top: b.y, opacity: 0, fontSize: b.fontSize }}
+            >
+              {b.label.toUpperCase()}
+            </div>
+          ))}
 
           {groups.map((group) => {
             const first = group.restrooms[0];

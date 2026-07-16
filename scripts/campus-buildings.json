@@ -1,42 +1,76 @@
 {
-  "width": 1600,
-  "height": 1300,
+  "width": 1440,
+  "height": 1280,
   "bbox": {
     "south": 60.178,
     "west": 24.81,
-    "north": 60.196,
-    "east": 24.845
+    "north": 60.1925,
+    "east": 24.843
   },
   "buildings": [
     {
       "key": "kandidaattikeskus",
       "label": "Kandidaattikeskus",
-      "x": 835,
-      "y": 696
+      "x": 888,
+      "y": 530,
+      "revealScale": 0.8105946329178699,
+      "fontSize": 11
     },
     {
       "key": "csBuilding",
       "label": "Tietotekniikan talo",
-      "x": 580,
-      "y": 654
+      "x": 572,
+      "y": 477,
+      "revealScale": 0.8995880024137431,
+      "fontSize": 6.4
     },
     {
       "key": "learningCentre",
       "label": "Harald Herlin Learning Centre",
-      "x": 810,
-      "y": 813
+      "x": 857,
+      "y": 676,
+      "revealScale": 0.9038842636035519,
+      "fontSize": 3.2
     },
     {
       "key": "dipoli",
       "label": "Dipoli",
-      "x": 977,
-      "y": 784
+      "x": 1065,
+      "y": 640,
+      "revealScale": 0.6824419928812676,
+      "fontSize": 11
+    },
+    {
+      "key": "servinMokki",
+      "label": "Servin mökki",
+      "x": 1246,
+      "y": 345,
+      "revealScale": 0.9160570015011432,
+      "fontSize": 2
+    },
+    {
+      "key": "marsio",
+      "label": "Marsio",
+      "x": 772,
+      "y": 522,
+      "revealScale": 0.7588363024821269,
+      "fontSize": 11
     },
     {
       "key": "vare",
       "label": "Väre",
-      "x": 708,
-      "y": 752
+      "x": 730,
+      "y": 600,
+      "revealScale": 0.43324774204296423,
+      "fontSize": 11
+    },
+    {
+      "key": "aBloc",
+      "label": "A Bloc",
+      "x": 739,
+      "y": 663,
+      "revealScale": 0.5885707957685471,
+      "fontSize": 11
     }
   ]
 }

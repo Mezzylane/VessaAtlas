@@ -1,13 +1,8 @@
-import fs from "node:fs";
-import path from "node:path";
-
 import { CampusMapContainer } from "@/components/map/CampusMapContainer";
-
-const MAP_WIDTH = 1600;
-const MAP_HEIGHT = 1300;
+import { loadCampusMapData } from "@/lib/campusMapData";
 
 export default function HomePage() {
-  const mapSvg = fs.readFileSync(path.join(process.cwd(), "public/map/campus.svg"), "utf-8");
+  const { svg: mapSvg, width: mapWidth, height: mapHeight, buildingLabels } = loadCampusMapData();
 
   return (
     <div className="max-w-295 mx-auto px-5 pt-5 pb-12 w-full">
@@ -33,7 +28,7 @@ export default function HomePage() {
         </div>
       </header>
 
-      <CampusMapContainer mapSvg={mapSvg} mapWidth={MAP_WIDTH} mapHeight={MAP_HEIGHT} />
+      <CampusMapContainer mapSvg={mapSvg} mapWidth={mapWidth} mapHeight={mapHeight} buildingLabels={buildingLabels} />
 
       <footer
         style={{

@@ -5,14 +5,17 @@
 import { db } from "../lib/db/client";
 import { restrooms, reviews } from "../lib/db/schema";
 
+// Coordinates are small offsets from each building's centroid in
+// scripts/campus-buildings.json — keep in sync if the bbox/projection in
+// scripts/geojson-to-svg.ts ever changes (regenerate + reseed together).
 const SEED_RESTROOMS = [
-  { building: "Dipoli", floorNumber: 0, floorLabel: "Ground floor", wing: "Foyer", gender: "men" as const, xCoord: 977, yCoord: 778 },
-  { building: "Väre", floorNumber: 1, floorLabel: "1st floor", wing: "Atrium", gender: "men" as const, xCoord: 700, yCoord: 745 },
-  { building: "Väre", floorNumber: 1, floorLabel: "1st floor", wing: "Atrium", gender: "women" as const, xCoord: 716, yCoord: 745 },
-  { building: "Harald Herlin Learning Centre", floorNumber: 0, floorLabel: "Ground floor", wing: "Spiral core", gender: "men" as const, xCoord: 810, yCoord: 808 },
-  { building: "Kandidaattikeskus", floorNumber: 1, floorLabel: "1st floor", wing: "Lecture wing", gender: "men" as const, xCoord: 835, yCoord: 690 },
-  { building: "Kandidaattikeskus", floorNumber: 2, floorLabel: "2nd floor", wing: "Lecture wing", gender: "women" as const, xCoord: 835, yCoord: 690 },
-  { building: "Tietotekniikan talo", floorNumber: 3, floorLabel: "3rd floor", wing: "North corridor", gender: "women" as const, xCoord: 580, yCoord: 648 },
+  { building: "Dipoli", floorNumber: 0, floorLabel: "Ground floor", wing: "Foyer", gender: "men" as const, xCoord: 1065, yCoord: 634 },
+  { building: "Väre", floorNumber: 1, floorLabel: "1st floor", wing: "Atrium", gender: "men" as const, xCoord: 722, yCoord: 593 },
+  { building: "Väre", floorNumber: 1, floorLabel: "1st floor", wing: "Atrium", gender: "women" as const, xCoord: 738, yCoord: 593 },
+  { building: "Harald Herlin Learning Centre", floorNumber: 0, floorLabel: "Ground floor", wing: "Spiral core", gender: "men" as const, xCoord: 857, yCoord: 671 },
+  { building: "Kandidaattikeskus", floorNumber: 1, floorLabel: "1st floor", wing: "Lecture wing", gender: "men" as const, xCoord: 888, yCoord: 524 },
+  { building: "Kandidaattikeskus", floorNumber: 2, floorLabel: "2nd floor", wing: "Lecture wing", gender: "women" as const, xCoord: 888, yCoord: 524 },
+  { building: "Tietotekniikan talo", floorNumber: 3, floorLabel: "3rd floor", wing: "North corridor", gender: "women" as const, xCoord: 572, yCoord: 471 },
 ];
 
 const SEED_REVIEWS: Record<number, { rating: number; comment: string | null; likeCount: number }[]> = {

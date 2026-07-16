@@ -29,6 +29,28 @@
   display: block;
 }
 
+.buildingLabel {
+  position: absolute;
+  /* A plain child of .mapStage — inherits the map's own scale transform, so
+     it grows and shrinks with the building around it, same as the outlines.
+     This transform only ever centers on (left, top), never scales. */
+  transform: translate(-50%, -50%);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .buildingLabel {
+    transition: none;
+  }
+}
+
 .pin {
   position: absolute;
   width: 26px;

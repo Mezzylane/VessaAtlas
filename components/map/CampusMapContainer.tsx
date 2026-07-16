@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import type { RestroomDetail, RestroomPin } from "@/lib/types";
+import type { BuildingLabel, RestroomDetail, RestroomPin } from "@/lib/types";
 
 import { CampusMap } from "./CampusMap";
 
@@ -10,6 +10,7 @@ type Props = {
   mapSvg: string;
   mapWidth: number;
   mapHeight: number;
+  buildingLabels?: BuildingLabel[];
   /** Admin "add restroom" mode: forwarded straight through to CampusMap. */
   onMapClick?: (x: number, y: number) => void;
   extraMarkers?: { x: number; y: number; label: string }[];
@@ -26,6 +27,7 @@ export function CampusMapContainer({
   mapSvg,
   mapWidth,
   mapHeight,
+  buildingLabels,
   onMapClick,
   extraMarkers,
   onRestroomsLoaded,
@@ -133,6 +135,7 @@ export function CampusMapContainer({
       mapWidth={mapWidth}
       mapHeight={mapHeight}
       restrooms={restrooms}
+      buildingLabels={buildingLabels}
       onSubmitRating={handleSubmitRating}
       onLike={handleLike}
       onMapClick={onMapClick}

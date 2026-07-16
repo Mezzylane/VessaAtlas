@@ -1,13 +1,8 @@
-import fs from "node:fs";
-import path from "node:path";
-
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
-
-const MAP_WIDTH = 1600;
-const MAP_HEIGHT = 1300;
+import { loadCampusMapData } from "@/lib/campusMapData";
 
 export default function AdminDashboardPage() {
-  const mapSvg = fs.readFileSync(path.join(process.cwd(), "public/map/campus.svg"), "utf-8");
+  const { svg: mapSvg, width: mapWidth, height: mapHeight, buildingLabels } = loadCampusMapData();
 
-  return <AdminDashboard mapSvg={mapSvg} mapWidth={MAP_WIDTH} mapHeight={MAP_HEIGHT} />;
+  return <AdminDashboard mapSvg={mapSvg} mapWidth={mapWidth} mapHeight={mapHeight} buildingLabels={buildingLabels} />;
 }

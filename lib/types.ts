@@ -25,3 +25,14 @@ export type RestroomDetail = RestroomPin & {
   histogram: number[];
   reviews: ReviewData[];
 };
+
+export type BuildingLabel = {
+  key: string;
+  label: string;
+  x: number;
+  y: number;
+  /** Map zoom scale at which this label becomes visible (see scripts/geojson-to-svg.ts) */
+  revealScale: number;
+  /** Base font size in px — capped per-building so the label, which grows with the map, never exceeds ~90% of its own building's width. */
+  fontSize: number;
+};

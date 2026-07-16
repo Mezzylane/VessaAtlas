@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { CampusMapContainer } from "@/components/map/CampusMapContainer";
-import type { RestroomPin } from "@/lib/types";
+import type { BuildingLabel, RestroomPin } from "@/lib/types";
 
 import { RestroomForm } from "./RestroomForm";
 
@@ -12,9 +12,10 @@ type Props = {
   mapSvg: string;
   mapWidth: number;
   mapHeight: number;
+  buildingLabels?: BuildingLabel[];
 };
 
-export function AdminDashboard({ mapSvg, mapWidth, mapHeight }: Props) {
+export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: Props) {
   const router = useRouter();
   const [ghostPin, setGhostPin] = useState<{ x: number; y: number } | null>(null);
   const [existing, setExisting] = useState<RestroomPin[]>([]);
@@ -71,6 +72,7 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight }: Props) {
             mapSvg={mapSvg}
             mapWidth={mapWidth}
             mapHeight={mapHeight}
+            buildingLabels={buildingLabels}
             onMapClick={(x, y) => setGhostPin({ x, y })}
             extraMarkers={ghostPin ? [{ x: ghostPin.x, y: ghostPin.y, label: "New restroom" }] : []}
             onRestroomsLoaded={setExisting}

@@ -1,0 +1,263 @@
+.panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(360px, 92%);
+  background: var(--surface);
+  border-left: 1px solid var(--line-faint);
+  transform: translateX(100%);
+  transition: transform 0.22s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition: none;
+  }
+}
+.panelOpen {
+  transform: translateX(0);
+}
+.panelHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 16px 10px;
+  border-bottom: 1px solid var(--line-faint);
+}
+.panelClose {
+  background: none;
+  border: 1px solid var(--line-faint);
+  color: var(--ink);
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  flex: none;
+}
+.floorChips {
+  display: flex;
+  gap: 6px;
+  padding: 10px 16px 0;
+  flex-wrap: wrap;
+}
+.floorChip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  padding: 5px 9px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--line);
+  cursor: pointer;
+}
+.floorChipActive {
+  background: var(--line);
+  color: var(--surface);
+}
+
+.panelBody {
+  overflow-y: auto;
+  flex: 1;
+  padding: 14px 16px 20px;
+}
+.rBuilding {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 19px;
+  text-wrap: balance;
+}
+.rSub {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.rSubDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.avgRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 16px;
+}
+.avgNum {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 34px;
+  font-variant-numeric: tabular-nums;
+}
+.avgDen {
+  font-family: var(--font-mono);
+  color: var(--muted);
+  font-size: 14px;
+}
+.avgCount {
+  font-family: var(--font-mono);
+  color: var(--muted);
+  font-size: 11.5px;
+  margin-left: auto;
+}
+
+.hist {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 34px;
+  margin-top: 10px;
+}
+.histBar {
+  flex: 1;
+  background: var(--line-faint);
+  display: block;
+}
+
+.rateBlock {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-faint);
+}
+.rateLabel {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rateScale {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.rateBtn {
+  width: 27px;
+  height: 27px;
+  border: 1px solid var(--line-faint);
+  background: none;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.rateBtnSelected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--ink);
+  font-weight: 700;
+}
+.rateText {
+  width: 100%;
+  margin-top: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-faint);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 8px;
+  resize: vertical;
+  min-height: 56px;
+}
+.rateSubmit {
+  margin-top: 8px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 8px 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.rateSubmit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.rateHint {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  margin-top: 7px;
+  line-height: 1.4;
+}
+.rateThanks {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--accent);
+  margin-top: 8px;
+}
+.rateError {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--pin-women);
+  margin-top: 8px;
+}
+
+.reviewsHead {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line-faint);
+}
+.review {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line-faint);
+}
+.review:last-child {
+  border-bottom: none;
+}
+.reviewBadge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--surface-2);
+  padding: 2px 6px;
+  flex: none;
+}
+.reviewText {
+  font-size: 13.5px;
+  line-height: 1.45;
+  margin-top: 6px;
+}
+.likeBtn {
+  margin-top: 7px;
+  background: none;
+  border: 1px solid var(--line-faint);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.likeBtnLiked {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}

@@ -1,0 +1,77 @@
+.form {
+  width: 300px;
+  flex: none;
+  background: var(--surface);
+  border: 1px solid var(--line-faint);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-self: flex-start;
+}
+.title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-size: 15px;
+}
+.coords {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: -6px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+.field input,
+.field select {
+  background: var(--surface-2);
+  border: 1px solid var(--line-faint);
+  color: var(--ink);
+  padding: 7px 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.cancel {
+  background: none;
+  border: 1px solid var(--line-faint);
+  color: var(--muted);
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  flex: 1;
+}
+.submit {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  flex: 1;
+}
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.error {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--pin-women);
+}

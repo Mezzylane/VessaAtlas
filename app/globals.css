@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/*
+ * Design system: "blueprint" — light theme reads as a diazo print (white
+ * ground, blue linework); dark theme as a cyanotype (blue ground, white
+ * linework) — the two historical blueprint reproduction processes. Matches
+ * the approved mockup (see the Vessa Atlas artifact).
+ */
+:root {
+  --paper: #f4f6f5;
+  --ink: #10233f;
+  --line: #2f5c8a;
+  --line-faint: rgba(47, 92, 138, 0.16);
+  --accent: #d98e2b;
+  --pin-men: #2456a6;
+  --pin-women: #b23a2e;
+  --surface: #ffffff;
+  --surface-2: #eaefee;
+  --muted: #5b6b7a;
+  --focus: #d98e2b;
+
+  --font-display: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, monospace;
+  --font-body: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0e2a4a;
+    --ink: #eaf2fb;
+    --line: #6fa8d8;
+    --line-faint: rgba(111, 168, 216, 0.22);
+    --accent: #f2b84b;
+    --pin-men: #7ec8ff;
+    --pin-women: #ff8a75;
+    --surface: #123057;
+    --surface-2: #173a68;
+    --muted: #9fb6cc;
+    --focus: #f2b84b;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0e2a4a;
+  --ink: #eaf2fb;
+  --line: #6fa8d8;
+  --line-faint: rgba(111, 168, 216, 0.22);
+  --accent: #f2b84b;
+  --pin-men: #7ec8ff;
+  --pin-women: #ff8a75;
+  --surface: #123057;
+  --surface-2: #173a68;
+  --muted: #9fb6cc;
+  --focus: #f2b84b;
+}
+:root[data-theme="light"] {
+  --paper: #f4f6f5;
+  --ink: #10233f;
+  --line: #2f5c8a;
+  --line-faint: rgba(47, 92, 138, 0.16);
+  --accent: #d98e2b;
+  --pin-men: #2456a6;
+  --pin-women: #b23a2e;
+  --surface: #ffffff;
+  --surface-2: #eaefee;
+  --muted: #5b6b7a;
+  --focus: #d98e2b;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}

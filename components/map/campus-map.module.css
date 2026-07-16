@@ -1,0 +1,146 @@
+.stageWrap {
+  position: relative;
+}
+.viewport {
+  position: relative;
+  width: 100%;
+  height: min(78vh, 720px);
+  min-height: 420px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--line-faint);
+  cursor: grab;
+  touch-action: none;
+}
+.viewport.dragging {
+  cursor: grabbing;
+}
+.mapStage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.mapStage :global(svg) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
+.pin {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: transform 0.12s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pin {
+    transition: none;
+  }
+}
+.pin:hover,
+.pin:focus-visible {
+  transform: scale(1.15);
+}
+.pinMen {
+  background: var(--pin-men);
+}
+.pinWomen {
+  background: var(--pin-women);
+}
+.pinCluster {
+  background: var(--accent);
+}
+.clusterBadge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--surface);
+}
+
+.mapToolbar {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--line-faint);
+  background: var(--surface);
+}
+.mapToolbar button {
+  width: 34px;
+  height: 34px;
+  background: var(--surface);
+  border: none;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line-faint);
+}
+.mapToolbar button:last-child {
+  border-bottom: none;
+}
+.mapToolbar button:hover {
+  background: var(--surface-2);
+}
+
+.legend {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line-faint);
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.legendDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.scaleNote {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}

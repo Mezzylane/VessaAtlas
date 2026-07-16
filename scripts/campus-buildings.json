@@ -1,0 +1,42 @@
+{
+  "width": 1600,
+  "height": 1300,
+  "bbox": {
+    "south": 60.178,
+    "west": 24.81,
+    "north": 60.196,
+    "east": 24.845
+  },
+  "buildings": [
+    {
+      "key": "kandidaattikeskus",
+      "label": "Kandidaattikeskus",
+      "x": 835,
+      "y": 696
+    },
+    {
+      "key": "csBuilding",
+      "label": "Tietotekniikan talo",
+      "x": 580,
+      "y": 654
+    },
+    {
+      "key": "learningCentre",
+      "label": "Harald Herlin Learning Centre",
+      "x": 810,
+      "y": 813
+    },
+    {
+      "key": "dipoli",
+      "label": "Dipoli",
+      "x": 977,
+      "y": 784
+    },
+    {
+      "key": "vare",
+      "label": "Väre",
+      "x": 708,
+      "y": 752
+    }
+  ]
+}

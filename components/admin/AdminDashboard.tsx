@@ -56,6 +56,15 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
     setMapKey((k) => k + 1); // remount CampusMapContainer to refetch pins
   }
 
+  function handleCoordsChange(x: number, y: number) {
+    setDraft((prev) => (prev ? { ...prev, x, y } : prev));
+  }
+
+  function handleAddAnotherHere(x: number, y: number) {
+    setClusterPicker(null);
+    setDraft({ x, y, building: "", floorNumber: 0, wing: "", gender: "men" });
+  }
+
   return (
     <div className="max-w-295 mx-auto px-5 pt-5 pb-12 w-full">
       <header
@@ -121,6 +130,13 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
                 {r.building} · {r.floorLabel} · {genderLabel(r.gender)}
               </button>
             ))}
+            <button
+              type="button"
+              className={styles.cancel}
+              onClick={() => handleAddAnotherHere(clusterPicker[0].x, clusterPicker[0].y)}
+            >
+              + Add another restroom at this spot
+            </button>
             <button type="button" className={styles.cancel} onClick={() => setClusterPicker(null)}>
               Cancel
             </button>
@@ -135,6 +151,8 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
             onCancel={() => setDraft(null)}
             onSaved={handleDone}
             onDeleted={handleDone}
+            onCoordsChange={handleCoordsChange}
+            onAddAnotherHere={() => handleAddAnotherHere(draft.x, draft.y)}
           />
         )}
       </div>

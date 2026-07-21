@@ -14,9 +14,13 @@ type Props = {
   onCancel: () => void;
   onSaved: () => void;
   onDeleted: () => void;
+  /** "Same spot as..." picks an existing restroom's exact (x, y) — coordinates live in the parent, not this form's local state. */
+  onCoordsChange: (x: number, y: number) => void;
+  /** Editing an existing restroom but want to add another floor at this same spot, without touching the one you clicked? This starts a fresh create-draft here. */
+  onAddAnotherHere: () => void;
 };
 
-export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted }: Props) {
+export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted, onCoordsChange, onAddAnotherHere }: Props) {
   const isEditing = !!draft.id;
   const [building, setBuilding] = useState(draft.building);
   const [floorNumber, setFloorNumber] = useState(draft.floorNumber);
@@ -32,6 +36,7 @@ export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted }: 
     if (!match) return;
     setBuilding(match.building);
     if (match.wing) setWing(match.wing);
+    onCoordsChange(match.x, match.y);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -100,6 +105,7 @@ export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted }: 
               </option>
             ))}
           </select>
+          <span className={styles.derivedLabel}>Copies that restroom&apos;s exact coordinates here, for adding another floor at the same spot.</span>
         </label>
       )}
 
@@ -138,6 +144,11 @@ export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted }: 
           {submitting ? "Saving…" : "Save restroom"}
         </button>
       </div>
+      {isEditing && (
+        <button type="button" className={styles.cancel} onClick={onAddAnotherHere}>
+          + Add another restroom at this spot
+        </button>
+      )}
       {isEditing && (
         <button type="button" className={styles.delete} onClick={handleDelete} disabled={deleting}>
           {deleting ? "Removing…" : confirmingDelete ? "Click again to confirm removal" : "Remove restroom"}

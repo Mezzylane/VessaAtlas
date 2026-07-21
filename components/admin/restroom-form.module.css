@@ -30,6 +30,14 @@
   font-size: 11px;
   color: var(--muted);
 }
+.coordsRow {
+  display: flex;
+  gap: 8px;
+}
+.coordsRow .field {
+  flex: 1;
+  min-width: 0;
+}
 .field input,
 .field select {
   background: var(--surface-2);

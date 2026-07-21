@@ -3,24 +3,22 @@
 import { useState } from "react";
 
 import { floorLabelFromNumber } from "@/lib/floors";
-import { genderLabel } from "@/lib/gender";
-import type { Gender, RestroomDraft, RestroomPin } from "@/lib/types";
+import type { Gender, RestroomDraft } from "@/lib/types";
 
 import styles from "./restroom-form.module.css";
 
 type Props = {
   draft: RestroomDraft;
-  existing: RestroomPin[];
   onCancel: () => void;
   onSaved: () => void;
   onDeleted: () => void;
-  /** "Same spot as..." picks an existing restroom's exact (x, y) — coordinates live in the parent, not this form's local state. */
+  /** Coordinates live in the parent (also updated by clicking the map), not this form's local state. */
   onCoordsChange: (x: number, y: number) => void;
-  /** Editing an existing restroom but want to add another floor at this same spot, without touching the one you clicked? This starts a fresh create-draft here. */
+  /** Editing an existing restroom but want to add another floor at this same spot, without touching the one you clicked? This starts a fresh create-draft here, prefilled with this restroom's other fields. */
   onAddAnotherHere: () => void;
 };
 
-export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted, onCoordsChange, onAddAnotherHere }: Props) {
+export function RestroomForm({ draft, onCancel, onSaved, onDeleted, onCoordsChange, onAddAnotherHere }: Props) {
   const isEditing = !!draft.id;
   const [building, setBuilding] = useState(draft.building);
   const [floorNumber, setFloorNumber] = useState(draft.floorNumber);
@@ -31,12 +29,15 @@ export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted, on
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function applySameSpot(id: string) {
-    const match = existing.find((r) => r.id === id);
-    if (!match) return;
-    setBuilding(match.building);
-    if (match.wing) setWing(match.wing);
-    onCoordsChange(match.x, match.y);
+  // Positive integers only — anything else is silently ignored, so the
+  // field just keeps showing its last valid value instead of erroring.
+  function handleXChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const parsed = Number(e.target.value);
+    if (Number.isInteger(parsed) && parsed > 0) onCoordsChange(parsed, draft.y);
+  }
+  function handleYChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const parsed = Number(e.target.value);
+    if (Number.isInteger(parsed) && parsed > 0) onCoordsChange(draft.x, parsed);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -89,25 +90,18 @@ export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted, on
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <div className={styles.title}>{isEditing ? "Edit restroom" : "New restroom"}</div>
-      <div className={styles.coords}>
-        at ({draft.x}, {draft.y})
-        {isEditing && <span> — click a new spot on the map to move it</span>}
-      </div>
 
-      {existing.length > 0 && (
+      <div className={styles.coordsRow}>
         <label className={styles.field}>
-          <span>Same spot as an existing floor (optional)</span>
-          <select onChange={(e) => e.target.value && applySameSpot(e.target.value)} defaultValue="">
-            <option value="">— none —</option>
-            {existing.map((r) => (
-              <option key={r.id} value={r.id}>
-                {r.building} · {r.floorLabel} · {genderLabel(r.gender)} · ({r.x}, {r.y})
-              </option>
-            ))}
-          </select>
-          <span className={styles.derivedLabel}>Copies that restroom&apos;s exact coordinates here, for adding another floor at the same spot.</span>
+          <span>X</span>
+          <input type="number" min={1} step={1} value={draft.x} onChange={handleXChange} />
         </label>
-      )}
+        <label className={styles.field}>
+          <span>Y</span>
+          <input type="number" min={1} step={1} value={draft.y} onChange={handleYChange} />
+        </label>
+      </div>
+      <span className={styles.derivedLabel}>or click a new spot on the map to move it</span>
 
       <label className={styles.field}>
         <span>Building</span>

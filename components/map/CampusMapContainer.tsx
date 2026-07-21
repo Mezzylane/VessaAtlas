@@ -15,8 +15,6 @@ type Props = {
   onMapClick?: (x: number, y: number) => void;
   onPinClick?: (group: PinGroup) => void;
   extraMarkers?: { x: number; y: number; label: string }[];
-  /** Admin dashboard uses this to populate the "same spot as..." picker. */
-  onRestroomsLoaded?: (pins: RestroomPin[]) => void;
 };
 
 /**
@@ -32,7 +30,6 @@ export function CampusMapContainer({
   onMapClick,
   onPinClick,
   extraMarkers,
-  onRestroomsLoaded,
 }: Props) {
   const [restrooms, setRestrooms] = useState<RestroomDetail[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
@@ -45,7 +42,6 @@ export function CampusMapContainer({
         const pinsRes = await fetch("/api/restrooms");
         if (!pinsRes.ok) throw new Error("failed to load restrooms");
         const pins: RestroomPin[] = await pinsRes.json();
-        onRestroomsLoaded?.(pins);
 
         const details = await Promise.all(
           pins.map(async (pin) => {

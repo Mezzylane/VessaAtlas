@@ -6,7 +6,7 @@ import { useState } from "react";
 import { CampusMapContainer } from "@/components/map/CampusMapContainer";
 import type { PinGroup } from "@/components/map/CampusMap";
 import { genderLabel } from "@/lib/gender";
-import type { BuildingLabel, RestroomDetail, RestroomDraft, RestroomPin } from "@/lib/types";
+import type { BuildingLabel, RestroomDetail, RestroomDraft } from "@/lib/types";
 
 import { RestroomForm } from "./RestroomForm";
 import styles from "./restroom-form.module.css";
@@ -26,7 +26,6 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
   const router = useRouter();
   const [draft, setDraft] = useState<RestroomDraft | null>(null);
   const [clusterPicker, setClusterPicker] = useState<RestroomDetail[] | null>(null);
-  const [existing, setExisting] = useState<RestroomPin[]>([]);
   const [mapKey, setMapKey] = useState(0);
 
   async function handleLogout() {
@@ -60,9 +59,9 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
     setDraft((prev) => (prev ? { ...prev, x, y } : prev));
   }
 
-  function handleAddAnotherHere(x: number, y: number) {
+  function handleAddAnotherHere(base: RestroomDraft) {
     setClusterPicker(null);
-    setDraft({ x, y, building: "", floorNumber: 0, wing: "", gender: "men" });
+    setDraft({ ...base, id: undefined });
   }
 
   return (
@@ -109,7 +108,6 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
             onMapClick={handleMapClick}
             onPinClick={handlePinClick}
             extraMarkers={draft ? [{ x: draft.x, y: draft.y, label: draft.id ? "Editing" : "New restroom" }] : []}
-            onRestroomsLoaded={setExisting}
           />
         </div>
 
@@ -133,7 +131,7 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
             <button
               type="button"
               className={styles.cancel}
-              onClick={() => handleAddAnotherHere(clusterPicker[0].x, clusterPicker[0].y)}
+              onClick={() => handleAddAnotherHere(toDraft(clusterPicker[0]))}
             >
               + Add another restroom at this spot
             </button>
@@ -147,12 +145,11 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
           <RestroomForm
             key={draft.id ?? "new"}
             draft={draft}
-            existing={existing}
             onCancel={() => setDraft(null)}
             onSaved={handleDone}
             onDeleted={handleDone}
             onCoordsChange={handleCoordsChange}
-            onAddAnotherHere={() => handleAddAnotherHere(draft.x, draft.y)}
+            onAddAnotherHere={() => handleAddAnotherHere(draft)}
           />
         )}
       </div>

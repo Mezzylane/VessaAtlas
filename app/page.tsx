@@ -23,7 +23,7 @@ export default function HomePage() {
             VESSA<span style={{ color: "var(--accent)" }}>·</span>ATLAS
           </div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--muted)", marginTop: 6 }}>
-            unofficial campus WC ratings — Otaniemi, for the culture
+            unofficial campus WC ratings
           </div>
         </div>
       </header>

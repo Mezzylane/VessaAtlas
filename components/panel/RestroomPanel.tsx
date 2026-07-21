@@ -149,7 +149,7 @@ export function RestroomPanel({
           </div>
           <textarea
             className={styles.rateText}
-            placeholder="Optional: spacious? always a line? tell the truth."
+            placeholder="Tell us what you think..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             maxLength={500}
@@ -172,10 +172,10 @@ export function RestroomPanel({
           </button>
           {submitted && <div className={styles.rateThanks}>Thanks — logged anonymously.</div>}
           {submitError && <div className={styles.rateError}>{submitError}</div>}
-          <div className={styles.rateHint}>One rating per visitor per day, per restroom. Keeps it honest.</div>
+          <div className={styles.rateHint}>One rating per visitor per day, per restroom.</div>
         </div>
 
-        <div className={styles.reviewsHead}>Reviews · sorted by helpful votes</div>
+        <div className={styles.reviewsHead}>Reviews</div>
         {sortedReviews.map((r) => (
           <div key={r.id} className={styles.review}>
             <span className={styles.reviewBadge}>{r.rating}/10</span>

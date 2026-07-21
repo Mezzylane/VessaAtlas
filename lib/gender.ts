@@ -7,11 +7,7 @@ export function genderLabel(gender: Gender): string {
     case "women":
       return "Women's WC";
     case "unisex":
-      // Displayed as "General WC" — the DB value stays "unisex" for most of
-      // these imported from OSM data with no gender split recorded, "General"
-      // is the honest label: gender unspecified/unknown, not necessarily a
-      // genuinely single shared room.
-      return "General WC";
+      return "Unisex WC";
   }
 }
 

@@ -126,7 +126,7 @@ export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted }: 
         <select value={gender} onChange={(e) => setGender(e.target.value as Gender)}>
           <option value="men">Men&apos;s WC</option>
           <option value="women">Women&apos;s WC</option>
-          <option value="unisex">General WC</option>
+          <option value="unisex">Unisex WC</option>
         </select>
       </label>
 

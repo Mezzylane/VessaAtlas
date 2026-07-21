@@ -112,7 +112,8 @@ export function RestroomPanel({
               className={`${styles.floorChip} ${i === selectedIndex ? styles.floorChipActive : ""}`}
               onClick={() => onSelectFloor(i)}
             >
-              {r.floorLabel}
+              <span className={styles.floorChipDot} style={{ background: genderColorVar(r.gender) }} />
+              {r.floorLabel} · {genderLabel(r.gender)}
             </button>
           ))}
         </div>

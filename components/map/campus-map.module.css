@@ -75,12 +75,6 @@
 .pin:focus-visible {
   transform: scale(1.15);
 }
-.pinMen {
-  background: var(--pin-men);
-}
-.pinWomen {
-  background: var(--pin-women);
-}
 .pinCluster {
   background: var(--accent);
 }

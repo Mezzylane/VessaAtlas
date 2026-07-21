@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { CampusMapContainer } from "@/components/map/CampusMapContainer";
-import type { BuildingLabel, RestroomPin } from "@/lib/types";
+import type { PinGroup } from "@/components/map/CampusMap";
+import type { BuildingLabel, RestroomDetail, RestroomDraft, RestroomPin } from "@/lib/types";
 
 import { RestroomForm } from "./RestroomForm";
+import styles from "./restroom-form.module.css";
 
 type Props = {
   mapSvg: string;
@@ -15,9 +17,14 @@ type Props = {
   buildingLabels?: BuildingLabel[];
 };
 
+function toDraft(r: RestroomDetail): RestroomDraft {
+  return { id: r.id, x: r.x, y: r.y, building: r.building, floorNumber: r.floorNumber, wing: r.wing ?? "", gender: r.gender };
+}
+
 export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: Props) {
   const router = useRouter();
-  const [ghostPin, setGhostPin] = useState<{ x: number; y: number } | null>(null);
+  const [draft, setDraft] = useState<RestroomDraft | null>(null);
+  const [clusterPicker, setClusterPicker] = useState<RestroomDetail[] | null>(null);
   const [existing, setExisting] = useState<RestroomPin[]>([]);
   const [mapKey, setMapKey] = useState(0);
 
@@ -27,8 +34,24 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
     router.refresh();
   }
 
-  function handleCreated() {
-    setGhostPin(null);
+  function handleMapClick(x: number, y: number) {
+    setClusterPicker(null);
+    setDraft((prev) => (prev ? { ...prev, x, y } : { x, y, building: "", floorNumber: 0, wing: "", gender: "men" }));
+  }
+
+  function handlePinClick(group: PinGroup) {
+    if (group.restrooms.length === 1) {
+      setClusterPicker(null);
+      setDraft(toDraft(group.restrooms[0]));
+    } else {
+      setDraft(null);
+      setClusterPicker(group.restrooms);
+    }
+  }
+
+  function handleDone() {
+    setDraft(null);
+    setClusterPicker(null);
     setMapKey((k) => k + 1); // remount CampusMapContainer to refetch pins
   }
 
@@ -46,7 +69,7 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
             VESSA<span style={{ color: "var(--accent)" }}>·</span>ATLAS
           </div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--muted)", marginTop: 6 }}>
-            admin — click anywhere on the map to add a restroom
+            admin — click empty map space to add a restroom, or an existing pin to edit it
           </div>
         </div>
         <button
@@ -73,18 +96,44 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
             mapWidth={mapWidth}
             mapHeight={mapHeight}
             buildingLabels={buildingLabels}
-            onMapClick={(x, y) => setGhostPin({ x, y })}
-            extraMarkers={ghostPin ? [{ x: ghostPin.x, y: ghostPin.y, label: "New restroom" }] : []}
+            onMapClick={handleMapClick}
+            onPinClick={handlePinClick}
+            extraMarkers={draft ? [{ x: draft.x, y: draft.y, label: draft.id ? "Editing" : "New restroom" }] : []}
             onRestroomsLoaded={setExisting}
           />
         </div>
-        {ghostPin && (
+
+        {clusterPicker && (
+          <div className={styles.form}>
+            <div className={styles.title}>Multiple floors here</div>
+            <div className={styles.coords}>Which one do you want to edit?</div>
+            {clusterPicker.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                className={styles.cancel}
+                onClick={() => {
+                  setDraft(toDraft(r));
+                  setClusterPicker(null);
+                }}
+              >
+                {r.building} · {r.floorLabel} · {r.gender}
+              </button>
+            ))}
+            <button type="button" className={styles.cancel} onClick={() => setClusterPicker(null)}>
+              Cancel
+            </button>
+          </div>
+        )}
+
+        {draft && (
           <RestroomForm
-            x={ghostPin.x}
-            y={ghostPin.y}
+            key={draft.id ?? "new"}
+            draft={draft}
             existing={existing}
-            onCancel={() => setGhostPin(null)}
-            onCreated={handleCreated}
+            onCancel={() => setDraft(null)}
+            onSaved={handleDone}
+            onDeleted={handleDone}
           />
         )}
       </div>

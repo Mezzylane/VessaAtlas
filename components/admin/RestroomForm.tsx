@@ -2,32 +2,33 @@
 
 import { useState } from "react";
 
-import type { Gender, RestroomPin } from "@/lib/types";
+import { floorLabelFromNumber } from "@/lib/floors";
+import type { Gender, RestroomDraft, RestroomPin } from "@/lib/types";
 
 import styles from "./restroom-form.module.css";
 
 type Props = {
-  x: number;
-  y: number;
+  draft: RestroomDraft;
   existing: RestroomPin[];
   onCancel: () => void;
-  onCreated: () => void;
+  onSaved: () => void;
+  onDeleted: () => void;
 };
 
-export function RestroomForm({ x, y, existing, onCancel, onCreated }: Props) {
-  const [coords, setCoords] = useState({ x, y });
-  const [building, setBuilding] = useState("");
-  const [floorNumber, setFloorNumber] = useState(0);
-  const [floorLabel, setFloorLabel] = useState("");
-  const [wing, setWing] = useState("");
-  const [gender, setGender] = useState<Gender>("men");
+export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted }: Props) {
+  const isEditing = !!draft.id;
+  const [building, setBuilding] = useState(draft.building);
+  const [floorNumber, setFloorNumber] = useState(draft.floorNumber);
+  const [wing, setWing] = useState(draft.wing);
+  const [gender, setGender] = useState<Gender>(draft.gender);
   const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function applySameSpot(id: string) {
     const match = existing.find((r) => r.id === id);
     if (!match) return;
-    setCoords({ x: match.x, y: match.y });
     setBuilding(match.building);
     if (match.wing) setWing(match.wing);
   }
@@ -37,34 +38,54 @@ export function RestroomForm({ x, y, existing, onCancel, onCreated }: Props) {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch("/api/admin/restrooms", {
-        method: "POST",
+      const res = await fetch(isEditing ? `/api/admin/restrooms/${draft.id}` : "/api/admin/restrooms", {
+        method: isEditing ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           building,
           floorNumber,
-          floorLabel,
           wing: wing || undefined,
           gender,
-          xCoord: coords.x,
-          yCoord: coords.y,
+          xCoord: draft.x,
+          yCoord: draft.y,
         }),
       });
       if (!res.ok) {
         setError("Couldn't save — check the fields and try again.");
         return;
       }
-      onCreated();
+      onSaved();
     } finally {
       setSubmitting(false);
     }
   }
 
+  async function handleDelete() {
+    if (!confirmingDelete) {
+      setConfirmingDelete(true);
+      return;
+    }
+    setDeleting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/restrooms/${draft.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        setError("Couldn't delete — try again.");
+        setConfirmingDelete(false);
+        return;
+      }
+      onDeleted();
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
-      <div className={styles.title}>New restroom</div>
+      <div className={styles.title}>{isEditing ? "Edit restroom" : "New restroom"}</div>
       <div className={styles.coords}>
-        at ({coords.x}, {coords.y})
+        at ({draft.x}, {draft.y})
+        {isEditing && <span> — click a new spot on the map to move it</span>}
       </div>
 
       {existing.length > 0 && (
@@ -86,22 +107,14 @@ export function RestroomForm({ x, y, existing, onCancel, onCreated }: Props) {
         <input value={building} onChange={(e) => setBuilding(e.target.value)} required />
       </label>
       <label className={styles.field}>
-        <span>Floor number (sort order, 0 = ground, negative = basement)</span>
+        <span>Floor number (0 = ground, negative = basement)</span>
         <input
           type="number"
           value={floorNumber}
           onChange={(e) => setFloorNumber(Number(e.target.value))}
           required
         />
-      </label>
-      <label className={styles.field}>
-        <span>Floor label</span>
-        <input
-          value={floorLabel}
-          onChange={(e) => setFloorLabel(e.target.value)}
-          placeholder="e.g. 1st floor"
-          required
-        />
+        <span className={styles.derivedLabel}>→ {floorLabelFromNumber(floorNumber)}</span>
       </label>
       <label className={styles.field}>
         <span>Wing (optional)</span>
@@ -112,6 +125,7 @@ export function RestroomForm({ x, y, existing, onCancel, onCreated }: Props) {
         <select value={gender} onChange={(e) => setGender(e.target.value as Gender)}>
           <option value="men">Men&apos;s WC</option>
           <option value="women">Women&apos;s WC</option>
+          <option value="unisex">Unisex WC</option>
         </select>
       </label>
 
@@ -123,6 +137,11 @@ export function RestroomForm({ x, y, existing, onCancel, onCreated }: Props) {
           {submitting ? "Saving…" : "Save restroom"}
         </button>
       </div>
+      {isEditing && (
+        <button type="button" className={styles.delete} onClick={handleDelete} disabled={deleting}>
+          {deleting ? "Removing…" : confirmingDelete ? "Click again to confirm removal" : "Remove restroom"}
+        </button>
+      )}
       {error && <div className={styles.error}>{error}</div>}
     </form>
   );

@@ -12,7 +12,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-export const genderEnum = pgEnum("gender", ["men", "women"]);
+export const genderEnum = pgEnum("gender", ["men", "women", "unisex"]);
 
 export const restrooms = pgTable(
   "restrooms",

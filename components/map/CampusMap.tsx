@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { RestroomPanel } from "@/components/panel/RestroomPanel";
+import { genderColorVar } from "@/lib/gender";
 import type { BuildingLabel, RestroomDetail } from "@/lib/types";
 
 import styles from "./campus-map.module.css";
@@ -24,9 +25,11 @@ type Props = {
   /** Extra pins to render that aren't part of `restrooms` (e.g. an admin's in-progress "ghost pin"). */
   extraMarkers?: { x: number; y: number; label: string }[];
   buildingLabels?: BuildingLabel[];
+  /** Admin edit flow: when provided, clicking an existing pin calls this instead of opening the public review panel. */
+  onPinClick?: (group: PinGroup) => void;
 };
 
-type PinGroup = { key: string; x: number; y: number; restrooms: RestroomDetail[] };
+export type PinGroup = { key: string; x: number; y: number; restrooms: RestroomDetail[] };
 
 export function CampusMap({
   mapSvg,
@@ -38,6 +41,7 @@ export function CampusMap({
   onMapClick,
   extraMarkers,
   buildingLabels,
+  onPinClick,
 }: Props) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const mapStageRef = useRef<HTMLDivElement>(null);
@@ -227,6 +231,10 @@ export function CampusMap({
   }, [onMapClick]);
 
   function openGroup(group: PinGroup) {
+    if (onPinClick) {
+      onPinClick(group);
+      return;
+    }
     setSelectedGroupKey(group.key);
     setSelectedIndex(0);
   }
@@ -263,8 +271,8 @@ export function CampusMap({
               <button
                 key={group.key}
                 data-pin="true"
-                className={`${styles.pin} ${isCluster ? styles.pinCluster : first.gender === "men" ? styles.pinMen : styles.pinWomen}`}
-                style={{ left: group.x, top: group.y }}
+                className={`${styles.pin} ${isCluster ? styles.pinCluster : ""}`}
+                style={{ left: group.x, top: group.y, background: isCluster ? undefined : genderColorVar(first.gender) }}
                 aria-label={`${first.building} restroom${isCluster ? "s" : ""}`}
                 onClick={() => openGroup(group)}
               >
@@ -302,6 +310,9 @@ export function CampusMap({
           </div>
           <div className={styles.legendRow}>
             <span className={styles.legendDot} style={{ background: "var(--pin-women)" }} /> Women&apos;s WC
+          </div>
+          <div className={styles.legendRow}>
+            <span className={styles.legendDot} style={{ background: "var(--pin-unisex)" }} /> Unisex WC
           </div>
           <div className={styles.legendRow}>
             <span className={styles.legendDot} style={{ background: "var(--accent)" }} /> Multiple floors here

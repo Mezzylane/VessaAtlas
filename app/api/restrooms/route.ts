@@ -8,6 +8,7 @@ export async function GET() {
     .select({
       id: restrooms.id,
       building: restrooms.building,
+      floorNumber: restrooms.floorNumber,
       floorLabel: restrooms.floorLabel,
       wing: restrooms.wing,
       gender: restrooms.gender,

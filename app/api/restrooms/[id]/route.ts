@@ -45,6 +45,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
   return NextResponse.json({
     id: restroom.id,
     building: restroom.building,
+    floorNumber: restroom.floorNumber,
     floorLabel: restroom.floorLabel,
     wing: restroom.wing,
     gender: restroom.gender,

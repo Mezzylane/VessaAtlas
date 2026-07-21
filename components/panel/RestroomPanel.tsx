@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { genderColorVar, genderLabel } from "@/lib/gender";
 import type { RestroomDetail } from "@/lib/types";
 
 import styles from "./restroom-panel.module.css";
@@ -21,10 +22,6 @@ const RATE_LIMIT_MESSAGES: Record<string, string> = {
   too_many_submissions_this_hour: "That's a lot of ratings in one hour — try again later.",
   submitting_too_fast: "Whoa, slow down a moment and try again.",
 };
-
-function genderLabel(gender: "men" | "women") {
-  return gender === "men" ? "Men's WC" : "Women's WC";
-}
 
 export function RestroomPanel({
   group,
@@ -94,7 +91,7 @@ export function RestroomPanel({
           <div className={styles.rSub}>
             <span
               className={styles.rSubDot}
-              style={{ background: restroom.gender === "men" ? "var(--pin-men)" : "var(--pin-women)" }}
+              style={{ background: genderColorVar(restroom.gender) }}
             />
             <span>
               {restroom.floorLabel}

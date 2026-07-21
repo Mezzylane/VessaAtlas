@@ -70,6 +70,24 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+.derivedLabel {
+  color: var(--accent);
+  font-size: 11px;
+}
+.delete {
+  background: none;
+  border: 1px solid var(--pin-women);
+  color: var(--pin-women);
+  padding: 8px 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+.delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .error {
   font-family: var(--font-mono);
   font-size: 11px;

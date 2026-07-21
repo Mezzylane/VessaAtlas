@@ -1,4 +1,4 @@
-export type Gender = "men" | "women";
+export type Gender = "men" | "women" | "unisex";
 
 export type ReviewData = {
   id: string;
@@ -11,6 +11,7 @@ export type ReviewData = {
 export type RestroomPin = {
   id: string;
   building: string;
+  floorNumber: number;
   floorLabel: string;
   wing: string | null;
   gender: Gender;
@@ -24,6 +25,17 @@ export type RestroomDetail = RestroomPin & {
   /** length 10, index 0 = count of rating "1", index 9 = count of rating "10" */
   histogram: number[];
   reviews: ReviewData[];
+};
+
+/** Admin create/edit form state. `id` present means editing an existing restroom. */
+export type RestroomDraft = {
+  id?: string;
+  x: number;
+  y: number;
+  building: string;
+  floorNumber: number;
+  wing: string;
+  gender: Gender;
 };
 
 export type BuildingLabel = {

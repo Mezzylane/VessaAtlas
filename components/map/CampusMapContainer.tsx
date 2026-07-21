@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import type { BuildingLabel, RestroomDetail, RestroomPin } from "@/lib/types";
 
-import { CampusMap } from "./CampusMap";
+import { CampusMap, type PinGroup } from "./CampusMap";
 
 type Props = {
   mapSvg: string;
@@ -13,6 +13,7 @@ type Props = {
   buildingLabels?: BuildingLabel[];
   /** Admin "add restroom" mode: forwarded straight through to CampusMap. */
   onMapClick?: (x: number, y: number) => void;
+  onPinClick?: (group: PinGroup) => void;
   extraMarkers?: { x: number; y: number; label: string }[];
   /** Admin dashboard uses this to populate the "same spot as..." picker. */
   onRestroomsLoaded?: (pins: RestroomPin[]) => void;
@@ -29,6 +30,7 @@ export function CampusMapContainer({
   mapHeight,
   buildingLabels,
   onMapClick,
+  onPinClick,
   extraMarkers,
   onRestroomsLoaded,
 }: Props) {
@@ -139,6 +141,7 @@ export function CampusMapContainer({
       onSubmitRating={handleSubmitRating}
       onLike={handleLike}
       onMapClick={onMapClick}
+      onPinClick={onPinClick}
       extraMarkers={extraMarkers}
     />
   );

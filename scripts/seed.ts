@@ -4,18 +4,19 @@
 // import below) are hoisted and execute before any of this file's own code.
 import { db } from "../lib/db/client";
 import { restrooms, reviews } from "../lib/db/schema";
+import { floorLabelFromNumber } from "../lib/floors";
 
 // Coordinates are small offsets from each building's centroid in
 // scripts/campus-buildings.json — keep in sync if the bbox/projection in
 // scripts/geojson-to-svg.ts ever changes (regenerate + reseed together).
 const SEED_RESTROOMS = [
-  { building: "Dipoli", floorNumber: 0, floorLabel: "Ground floor", wing: "Foyer", gender: "men" as const, xCoord: 1065, yCoord: 634 },
-  { building: "Väre", floorNumber: 1, floorLabel: "1st floor", wing: "Atrium", gender: "men" as const, xCoord: 722, yCoord: 593 },
-  { building: "Väre", floorNumber: 1, floorLabel: "1st floor", wing: "Atrium", gender: "women" as const, xCoord: 738, yCoord: 593 },
-  { building: "Harald Herlin Learning Centre", floorNumber: 0, floorLabel: "Ground floor", wing: "Spiral core", gender: "men" as const, xCoord: 857, yCoord: 671 },
-  { building: "Kandidaattikeskus", floorNumber: 1, floorLabel: "1st floor", wing: "Lecture wing", gender: "men" as const, xCoord: 888, yCoord: 524 },
-  { building: "Kandidaattikeskus", floorNumber: 2, floorLabel: "2nd floor", wing: "Lecture wing", gender: "women" as const, xCoord: 888, yCoord: 524 },
-  { building: "Tietotekniikan talo", floorNumber: 3, floorLabel: "3rd floor", wing: "North corridor", gender: "women" as const, xCoord: 572, yCoord: 471 },
+  { building: "Dipoli", floorNumber: 0, wing: "Foyer", gender: "men" as const, xCoord: 1065, yCoord: 634 },
+  { building: "Väre", floorNumber: 1, wing: "Atrium", gender: "men" as const, xCoord: 722, yCoord: 593 },
+  { building: "Väre", floorNumber: 1, wing: "Atrium", gender: "women" as const, xCoord: 738, yCoord: 593 },
+  { building: "Harald Herlin Learning Centre", floorNumber: 0, wing: "Spiral core", gender: "men" as const, xCoord: 857, yCoord: 671 },
+  { building: "Kandidaattikeskus", floorNumber: 1, wing: "Lecture wing", gender: "men" as const, xCoord: 888, yCoord: 524 },
+  { building: "Kandidaattikeskus", floorNumber: 2, wing: "Lecture wing", gender: "women" as const, xCoord: 888, yCoord: 524 },
+  { building: "Tietotekniikan talo", floorNumber: 3, wing: "North corridor", gender: "women" as const, xCoord: 572, yCoord: 471 },
 ];
 
 const SEED_REVIEWS: Record<number, { rating: number; comment: string | null; likeCount: number }[]> = {
@@ -53,12 +54,14 @@ const SEED_REVIEWS: Record<number, { rating: number; comment: string | null; lik
 async function main() {
   console.log("Seeding restrooms + reviews...");
   for (let i = 0; i < SEED_RESTROOMS.length; i++) {
-    const [inserted] = await db.insert(restrooms).values(SEED_RESTROOMS[i]).returning({ id: restrooms.id });
+    const seed = SEED_RESTROOMS[i];
+    const floorLabel = floorLabelFromNumber(seed.floorNumber);
+    const [inserted] = await db.insert(restrooms).values({ ...seed, floorLabel }).returning({ id: restrooms.id });
     const reviewSet = SEED_REVIEWS[i] ?? [];
     if (reviewSet.length > 0) {
       await db.insert(reviews).values(reviewSet.map((r) => ({ ...r, restroomId: inserted.id })));
     }
-    console.log(`  ${SEED_RESTROOMS[i].building} (${SEED_RESTROOMS[i].floorLabel}, ${SEED_RESTROOMS[i].gender}) -> ${inserted.id}`);
+    console.log(`  ${seed.building} (${floorLabel}, ${seed.gender}) -> ${inserted.id}`);
   }
   console.log("Done.");
 }

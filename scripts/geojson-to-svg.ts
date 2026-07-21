@@ -9,31 +9,14 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { geoMercator, geoPath } from "d3-geo";
+import { geoPath } from "d3-geo";
 import osmtogeojson from "osmtogeojson";
+
+import { BBOX, type GeoFeature, makeProjection, OUT_HEIGHT, OUT_WIDTH, rewindFeature } from "./osmGeo";
 
 const RAW_PATH = path.join(process.cwd(), "scripts/raw-overpass.json");
 const OUT_SVG_PATH = path.join(process.cwd(), "public/map/campus.svg");
 const OUT_META_PATH = path.join(process.cwd(), "scripts/campus-buildings.json");
-
-const WIDTH = 1600;
-const HEIGHT = 1300;
-
-// Crop a bit more off the east and north after fitting — trimmed by visible
-// grid cells (each cell is GRID_UNIT svg units), not by re-picking a bbox.
-const GRID_UNIT = 20;
-const CROP_EAST_COLUMNS = 8;
-const CROP_NORTH_ROWS = 1;
-const OUT_WIDTH = WIDTH - CROP_EAST_COLUMNS * GRID_UNIT;
-const OUT_HEIGHT = HEIGHT - CROP_NORTH_ROWS * GRID_UNIT;
-
-// Bounding box used for the Overpass query — the permanent coordinate space.
-// North trimmed to 60.1925 (excludes the single isolated "Luontolava"
-// building, cuts empty space beyond the main cluster). West back to the
-// original 24.81 (the west edge was fine all along). East trimmed to 24.843
-// (excludes a single isolated unnamed building at 24.8446-24.8459 that
-// otherwise straddles the edge and renders as a weird cut-off sliver).
-const BBOX = { south: 60.178, west: 24.81, north: 60.1925, east: 24.843 };
 
 const KNOWN_BUILDINGS: Record<string, { label: string; match: (name: string) => boolean }> = {
   vare: { label: "Väre", match: (n) => /v[äa]re/i.test(n) },
@@ -46,86 +29,14 @@ const KNOWN_BUILDINGS: Record<string, { label: string; match: (name: string) => 
   servinMokki: { label: "Servin mökki", match: (n) => /servin\s*m[öo]kki/i.test(n) },
 };
 
-type GeoFeature = {
-  type: "Feature";
-  // osmtogeojson flattens OSM tags directly onto `properties` (no nested `.tags`)
-  properties: Record<string, unknown> & { name?: string };
-  geometry: { type: string; coordinates: unknown };
-};
-
-/**
- * OSM way node order doesn't guarantee the ring winding d3-geo's spherical
- * math expects. A backwards ring gets interpreted as its complement — for a
- * small building, that's "everything except the building" (~4π steradians,
- * i.e. almost the whole sphere) — which silently produces garbage centroids
- * and bounds. Force a consistent winding on every ring before doing any
- * d3-geo spherical operation (fitSize, centroid, bounds, path).
- */
-function ringArea(ring: number[][]): number {
-  let sum = 0;
-  for (let i = 0; i < ring.length - 1; i++) {
-    const [x1, y1] = ring[i];
-    const [x2, y2] = ring[i + 1];
-    sum += x1 * y2 - x2 * y1;
-  }
-  return sum / 2;
-}
-function rewindRing(ring: number[][], wantClockwise: boolean): number[][] {
-  const isClockwise = ringArea(ring) < 0;
-  return isClockwise !== wantClockwise ? [...ring].reverse() : ring;
-}
-function rewindPolygonCoords(coords: number[][][]): number[][][] {
-  // exterior ring (index 0) clockwise, holes counter-clockwise — this is the
-  // orientation that empirically makes d3-geo compute the small, correct area
-  return coords.map((ring, i) => rewindRing(ring, i === 0));
-}
-function rewindFeature(feature: GeoFeature): GeoFeature {
-  const { geometry } = feature;
-  if (geometry.type === "Polygon") {
-    return { ...feature, geometry: { ...geometry, coordinates: rewindPolygonCoords(geometry.coordinates as number[][][]) } };
-  }
-  if (geometry.type === "MultiPolygon") {
-    return {
-      ...feature,
-      geometry: { ...geometry, coordinates: (geometry.coordinates as number[][][][]).map(rewindPolygonCoords) },
-    };
-  }
-  return feature;
-}
-
 const raw = JSON.parse(fs.readFileSync(RAW_PATH, "utf-8"));
 const rawGeojson = osmtogeojson(raw) as { type: "FeatureCollection"; features: GeoFeature[] };
 const geojson = { ...rawGeojson, features: rawGeojson.features.map(rewindFeature) };
 
-// Anchor the projection to the full query bbox (not just the buildings'
-// convex hull) so the SVG's margins are predictable and reproducible.
-const bboxFeature: GeoFeature = {
-  type: "Feature",
-  properties: {},
-  geometry: {
-    type: "Polygon",
-    coordinates: [
-      [
-        [BBOX.west, BBOX.south],
-        [BBOX.east, BBOX.south],
-        [BBOX.east, BBOX.north],
-        [BBOX.west, BBOX.north],
-        [BBOX.west, BBOX.south],
-      ],
-    ],
-  },
-};
-
 // Fit against the bbox rectangle ALONE, not the full building collection —
 // a single malformed/degenerate OSM geometry among 393 features can throw
 // off d3's auto-computed bounds and collapse the whole map to a speck.
-const projection = geoMercator().fitSize([WIDTH, HEIGHT], rewindFeature(bboxFeature) as never);
-// Shift the projection's own origin north by the cropped rows, so every
-// downstream coordinate (paths, centroids, bounds) comes out already
-// expressed in the cropped OUT_WIDTH x OUT_HEIGHT space — cropping the east
-// columns needs no shift, just a smaller output canvas (see OUT_WIDTH below).
-const [tx, ty] = projection.translate();
-projection.translate([tx, ty - CROP_NORTH_ROWS * GRID_UNIT]);
+const projection = makeProjection();
 const pathGen = geoPath(projection);
 
 // Rough on-screen width (px) of a label at BASE_FONT_SIZE — used to size

@@ -1,0 +1,377 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-07-21T14:22:11Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 569950199,
+  "lat": 60.1872188,
+  "lon": 24.8289516,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "layer": "-1",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 569950202,
+  "lat": 60.1867828,
+  "lon": 24.8286993,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 589913024,
+  "lat": 60.1858016,
+  "lon": 24.8273291,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 1009685321,
+  "lat": 60.1846457,
+  "lon": 24.8280770,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "check_date": "2024-03-08",
+    "fee": "no",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 1009685324,
+  "lat": 60.1850193,
+  "lon": 24.8326464,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 1009685331,
+  "lat": 60.1882431,
+  "lon": 24.8366106,
+  "tags": {
+    "access": "customers",
+    "amenity": "toilets",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 1130748040,
+  "lat": 60.1892984,
+  "lon": 24.8261110,
+  "tags": {
+    "access": "private",
+    "amenity": "toilets",
+    "fee": "no",
+    "opening_hours": "24/7"
+  }
+},
+{
+  "type": "node",
+  "id": 5101956778,
+  "lat": 60.1869785,
+  "lon": 24.8193544,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "female": "yes",
+    "male": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5101956779,
+  "lat": 60.1869885,
+  "lon": 24.8218288,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "female": "yes",
+    "male": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5113813892,
+  "lat": 60.1882719,
+  "lon": 24.8302214,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "female": "yes",
+    "level": "0",
+    "male": "yes",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 5130434745,
+  "lat": 60.1837418,
+  "lon": 24.8239410,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "check_date": "2025-04-10",
+    "check_date:wheelchair": "2025-04-10",
+    "fee": "no",
+    "level": "1",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5171375892,
+  "lat": 60.1869143,
+  "lon": 24.8254945,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets"
+  }
+},
+{
+  "type": "node",
+  "id": 5232638606,
+  "lat": 60.1869826,
+  "lon": 24.8309479,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "check_date": "2025-04-02",
+    "check_date:wheelchair": "2025-04-02",
+    "fee": "no",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 5382559473,
+  "lat": 60.1856814,
+  "lon": 24.8196182,
+  "tags": {
+    "access": "university",
+    "amenity": "toilets",
+    "level": "1",
+    "room": "t"
+  }
+},
+{
+  "type": "node",
+  "id": 5382559474,
+  "lat": 60.1855986,
+  "lon": 24.8197583,
+  "tags": {
+    "access": "university",
+    "amenity": "toilets",
+    "level": "1"
+  }
+},
+{
+  "type": "node",
+  "id": 5382559475,
+  "lat": 60.1856207,
+  "lon": 24.8195800,
+  "tags": {
+    "access": "university",
+    "amenity": "toilets",
+    "level": "1",
+    "wheelchair": "designated"
+  }
+},
+{
+  "type": "node",
+  "id": 5389688260,
+  "lat": 60.1889895,
+  "lon": 24.8333814,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "unisex": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5389688268,
+  "lat": 60.1889335,
+  "lon": 24.8306675,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "level": "0"
+  }
+},
+{
+  "type": "node",
+  "id": 5389688272,
+  "lat": 60.1889520,
+  "lon": 24.8300830,
+  "tags": {
+    "amenity": "toilets",
+    "fee": "no",
+    "level": "0",
+    "unisex": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5871819465,
+  "lat": 60.1852700,
+  "lon": 24.8249055,
+  "tags": {
+    "amenity": "toilets",
+    "fee": "no",
+    "unisex": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 5871819466,
+  "lat": 60.1844581,
+  "lon": 24.8251167,
+  "tags": {
+    "access": "yes",
+    "amenity": "toilets",
+    "capacity": "3",
+    "capacity:disabled": "1",
+    "changing_table": "yes",
+    "changing_table:count": "1",
+    "fee": "no",
+    "level": "-1",
+    "toilets:disposal": "flush",
+    "unisex": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6881329019,
+  "lat": 60.1863059,
+  "lon": 24.8300659,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "level": "0"
+  }
+},
+{
+  "type": "node",
+  "id": 10936759396,
+  "lat": 60.1867332,
+  "lon": 24.8284348,
+  "tags": {
+    "access": "private",
+    "amenity": "toilets",
+    "level": "1",
+    "level:ref": "2",
+    "wheelchair": "designated"
+  }
+},
+{
+  "type": "node",
+  "id": 11860720088,
+  "lat": 60.1852537,
+  "lon": 24.8209345,
+  "tags": {
+    "access": "yes",
+    "amenity": "toilets",
+    "capacity": "3",
+    "capacity:disabled": "1",
+    "changing_table": "yes",
+    "changing_table:count": "1",
+    "check_date:opening_hours": "2025-11-05",
+    "fee": "no",
+    "level": "0",
+    "opening_hours:signed": "no",
+    "toilets:disposal": "flush",
+    "unisex": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 11860720089,
+  "lat": 60.1848007,
+  "lon": 24.8251418,
+  "tags": {
+    "access": "yes",
+    "amenity": "toilets",
+    "capacity": "2",
+    "fee": "no",
+    "level": "0",
+    "toilets:disposal": "flush",
+    "unisex": "yes",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 12141712490,
+  "lat": 60.1864752,
+  "lon": 24.8260114,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "level": "0",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12141712491,
+  "lat": 60.1865481,
+  "lon": 24.8263291,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no",
+    "level": "0",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12146148962,
+  "lat": 60.1858605,
+  "lon": 24.8233809,
+  "tags": {
+    "access": "permissive",
+    "amenity": "toilets",
+    "fee": "no"
+  }
+}
+
+  ]
+}

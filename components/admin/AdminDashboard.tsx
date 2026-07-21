@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { CampusMapContainer } from "@/components/map/CampusMapContainer";
 import type { PinGroup } from "@/components/map/CampusMap";
+import { genderLabel } from "@/lib/gender";
 import type { BuildingLabel, RestroomDetail, RestroomDraft, RestroomPin } from "@/lib/types";
 
 import { RestroomForm } from "./RestroomForm";
@@ -117,7 +118,7 @@ export function AdminDashboard({ mapSvg, mapWidth, mapHeight, buildingLabels }: 
                   setClusterPicker(null);
                 }}
               >
-                {r.building} · {r.floorLabel} · {r.gender}
+                {r.building} · {r.floorLabel} · {genderLabel(r.gender)}
               </button>
             ))}
             <button type="button" className={styles.cancel} onClick={() => setClusterPicker(null)}>

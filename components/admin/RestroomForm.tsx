@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { floorLabelFromNumber } from "@/lib/floors";
+import { genderLabel } from "@/lib/gender";
 import type { Gender, RestroomDraft, RestroomPin } from "@/lib/types";
 
 import styles from "./restroom-form.module.css";
@@ -95,7 +96,7 @@ export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted }: 
             <option value="">— none —</option>
             {existing.map((r) => (
               <option key={r.id} value={r.id}>
-                {r.building} · {r.floorLabel} · {r.gender}
+                {r.building} · {r.floorLabel} · {genderLabel(r.gender)} · ({r.x}, {r.y})
               </option>
             ))}
           </select>
@@ -125,7 +126,7 @@ export function RestroomForm({ draft, existing, onCancel, onSaved, onDeleted }: 
         <select value={gender} onChange={(e) => setGender(e.target.value as Gender)}>
           <option value="men">Men&apos;s WC</option>
           <option value="women">Women&apos;s WC</option>
-          <option value="unisex">Unisex WC</option>
+          <option value="unisex">General WC</option>
         </select>
       </label>
 

@@ -312,7 +312,7 @@ export function CampusMap({
             <span className={styles.legendDot} style={{ background: "var(--pin-women)" }} /> Women&apos;s WC
           </div>
           <div className={styles.legendRow}>
-            <span className={styles.legendDot} style={{ background: "var(--pin-unisex)" }} /> Unisex WC
+            <span className={styles.legendDot} style={{ background: "var(--pin-unisex)" }} /> General WC
           </div>
           <div className={styles.legendRow}>
             <span className={styles.legendDot} style={{ background: "var(--accent)" }} /> Multiple floors here

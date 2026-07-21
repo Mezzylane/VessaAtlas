@@ -171,11 +171,47 @@ export function CampusMap({
       zoomAt(fx, fy, transform.current.scale * (e.deltaY < 0 ? 1.12 : 1 / 1.12));
     }
 
+    // Tracks every currently-down pointer by id so two simultaneous touches
+    // can be told apart from one — one pointer pans, two pinch-zoom, same as
+    // any standard map app (Google Maps etc).
+    const activePointers = new Map<number, { x: number; y: number }>();
     let dragging = false;
     let startX = 0;
     let startY = 0;
     let startPanX = 0;
     let startPanY = 0;
+    let pinch: { distance: number; scale: number; mapCenterX: number; mapCenterY: number } | null = null;
+    let hadMultiTouch = false;
+
+    function dist(a: { x: number; y: number }, b: { x: number; y: number }) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+    function midpoint(a: { x: number; y: number }, b: { x: number; y: number }) {
+      return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    }
+
+    function startPan(x: number, y: number) {
+      dragging = true;
+      startX = x;
+      startY = y;
+      startPanX = transform.current.panX;
+      startPanY = transform.current.panY;
+    }
+
+    function startPinch() {
+      dragging = false;
+      hadMultiTouch = true;
+      const [p1, p2] = Array.from(activePointers.values());
+      const rect = viewport!.getBoundingClientRect();
+      const center = midpoint(p1, p2);
+      const t = transform.current;
+      pinch = {
+        distance: dist(p1, p2),
+        scale: t.scale,
+        mapCenterX: (center.x - rect.left - t.panX) / t.scale,
+        mapCenterY: (center.y - rect.top - t.panY) / t.scale,
+      };
+    }
 
     function onPointerDown(e: PointerEvent) {
       const target = e.target as HTMLElement;
@@ -184,15 +220,35 @@ export function CampusMap({
       // events (pointer capture redirects the matching pointerup away from
       // the button, so its native click never fires).
       if (target.closest("button") || panelRef.current?.contains(target)) return;
-      dragging = true;
-      setIsDragging(true);
-      startX = e.clientX;
-      startY = e.clientY;
-      startPanX = transform.current.panX;
-      startPanY = transform.current.panY;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
       viewport!.setPointerCapture(e.pointerId);
+      setIsDragging(true);
+      if (activePointers.size === 1) {
+        startPan(e.clientX, e.clientY);
+      } else if (activePointers.size === 2) {
+        startPinch();
+      }
     }
     function onPointerMove(e: PointerEvent) {
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pinch && activePointers.size >= 2) {
+        const [p1, p2] = Array.from(activePointers.values());
+        const rect = viewport!.getBoundingClientRect();
+        const center = midpoint(p1, p2);
+        const fx = center.x - rect.left;
+        const fy = center.y - rect.top;
+        const t = transform.current;
+        const newScale = clamp(pinch.scale * (dist(p1, p2) / pinch.distance), t.minScale, t.maxScale);
+        t.scale = newScale;
+        t.panX = fx - pinch.mapCenterX * newScale;
+        t.panY = fy - pinch.mapCenterY * newScale;
+        clampPan();
+        applyTransform();
+        return;
+      }
+
       if (!dragging) return;
       transform.current.panX = startPanX + (e.clientX - startX);
       transform.current.panY = startPanY + (e.clientY - startY);
@@ -201,17 +257,32 @@ export function CampusMap({
     }
     function onPointerUp(e: PointerEvent) {
       const moved = dragging && (Math.abs(e.clientX - startX) > 3 || Math.abs(e.clientY - startY) > 3);
-      dragging = false;
-      setIsDragging(false);
-      if (!moved && onMapClick) {
-        const target = e.target as HTMLElement;
-        if (!target.closest("button") && !panelRef.current?.contains(target)) {
-          const rect = viewport!.getBoundingClientRect();
-          const fx = e.clientX - rect.left;
-          const fy = e.clientY - rect.top;
-          const t = transform.current;
-          onMapClick(Math.round((fx - t.panX) / t.scale), Math.round((fy - t.panY) / t.scale));
+      activePointers.delete(e.pointerId);
+
+      if (activePointers.size >= 2) {
+        // Still pinching with the remaining pointers — re-baseline so the
+        // gesture continues smoothly instead of jumping.
+        startPinch();
+      } else if (activePointers.size === 1) {
+        // Down to one finger — hand off to panning from its current spot.
+        pinch = null;
+        const [remaining] = Array.from(activePointers.values());
+        startPan(remaining.x, remaining.y);
+      } else {
+        pinch = null;
+        dragging = false;
+        setIsDragging(false);
+        if (!moved && !hadMultiTouch && onMapClick) {
+          const target = e.target as HTMLElement;
+          if (!target.closest("button") && !panelRef.current?.contains(target)) {
+            const rect = viewport!.getBoundingClientRect();
+            const fx = e.clientX - rect.left;
+            const fy = e.clientY - rect.top;
+            const t = transform.current;
+            onMapClick(Math.round((fx - t.panX) / t.scale), Math.round((fy - t.panY) / t.scale));
+          }
         }
+        hadMultiTouch = false;
       }
     }
 
